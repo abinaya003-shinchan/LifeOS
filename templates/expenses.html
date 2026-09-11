@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LifeOS | Expenses</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        .expenses-page {
+            min-height: calc(100vh - 10px);
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            margin-top: 5px;
+            letter-spacing: -0.8px;
+        }
+
+        .page-header p {
+            margin-top: 7px;
+            color: #85818f;
+            font-size: 14px;
+        }
+
+        /* SUMMARY */
+
+        .expense-summary {
+            position: relative;
+            overflow: hidden;
+
+            padding: 27px 30px;
+            margin-bottom: 22px;
+
+            border-radius: 22px;
+
+            background:
+                radial-gradient(
+                    circle at 90% 20%,
+                    rgba(61,147,96,0.15),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    135deg,
+                    #eefaf2,
+                    #f7fbf8
+                );
+
+            border: 1px solid #e0eee5;
+
+            box-shadow:
+                0 10px 30px rgba(45,100,65,0.07);
+        }
+
+        .expense-summary-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            color: #72917d;
+        }
+
+        .expense-total {
+            margin-top: 7px;
+
+            font-size: 34px;
+            font-weight: 750;
+
+            color: #28643f;
+            letter-spacing: -1px;
+        }
+
+        .expense-summary-text {
+            margin-top: 4px;
+
+            font-size: 11px;
+            color: #8b9d91;
+        }
+
+        .expense-summary-icon {
+            position: absolute;
+
+            right: 35px;
+            top: 24px;
+
+            width: 62px;
+            height: 62px;
+
+            border-radius: 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(255,255,255,0.75);
+
+            color: #3d9360;
+
+            font-size: 25px;
+
+            box-shadow:
+                0 8px 20px rgba(50,100,70,0.08);
+        }
+
+
+        /* EXPENSE LIST */
+
+        .expenses-card {
+            background: rgba(255,255,255,0.94);
+
+            border: 1px solid #e7e2ef;
+
+            border-radius: 24px;
+
+            padding: 26px;
+
+            box-shadow:
+                0 10px 30px rgba(40,30,65,0.06);
+        }
+
+        .expenses-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 20px;
+        }
+
+        .expenses-title h2 {
+            font-size: 19px;
+        }
+
+        .expense-count {
+            min-width: 34px;
+            height: 32px;
+
+            padding: 0 10px;
+
+            border-radius: 10px;
+
+            background: #eaf7ef;
+
+            color: #3d9360;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .expense-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .expense-item {
+            display: flex;
+            align-items: center;
+
+            gap: 14px;
+
+            padding: 16px;
+
+            border-radius: 15px;
+
+            background: #faf9fc;
+
+            border: 1px solid #eeeaf4;
+
+            transition: all 0.25s ease;
+        }
+
+        .expense-item:hover {
+            background: #f4faf6;
+
+            border-color: #dcece2;
+
+            transform: translateX(4px);
+
+            box-shadow:
+                0 7px 18px rgba(40,80,55,0.07);
+        }
+
+        .expense-icon {
+            width: 42px;
+            height: 42px;
+
+            flex-shrink: 0;
+
+            border-radius: 12px;
+
+            background: #eaf7ef;
+
+            color: #3d9360;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .expense-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .expense-info strong {
+            display: block;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            color: #302b3c;
+
+            word-break: break-word;
+        }
+
+        .expense-info small {
+            display: block;
+
+            margin-top: 4px;
+
+            color: #99939f;
+
+            font-size: 10px;
+        }
+
+        .expense-amount {
+            font-size: 15px;
+
+            font-weight: 750;
+
+            color: #32784d;
+
+            white-space: nowrap;
+        }
+
+
+        /* EMPTY */
+
+        .empty-expenses {
+            text-align: center;
+
+            padding: 65px 20px;
+        }
+
+        .empty-expense-icon {
+            width: 58px;
+            height: 58px;
+
+            margin: auto;
+
+            border-radius: 17px;
+
+            background: linear-gradient(
+                135deg,
+                #eaf7ef,
+                #f3faf5
+            );
+
+            color: #3d9360;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 25px;
+        }
+
+        .empty-expenses h3 {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        .empty-expenses p {
+            margin-top: 6px;
+
+            color: #99939f;
+
+            font-size: 12px;
+        }
+
+
+        @media (max-width: 600px) {
+
+            .page-header h1 {
+                font-size: 25px;
+            }
+
+            .expenses-card {
+                padding: 18px;
+            }
+
+            .expense-summary {
+                padding: 23px;
+            }
+
+            .expense-summary-icon {
+                right: 20px;
+            }
+
+            .expense-item {
+                padding: 13px;
+            }
+
+            .expense-amount {
+                font-size: 13px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                L
+            </div>
+
+            <div>
+                <h2>LifeOS</h2>
+                <span>Smart Life Manager</span>
+            </div>
+
+        </div>
+
+
+        <nav class="nav">
+
+            <a href="/" class="nav-item">
+                <span>⌂</span>
+                Dashboard
+            </a>
+
+            <a href="/ai-assistant" class="nav-item">
+                <span>✦</span>
+                AI Assistant
+            </a>
+
+            <a href="/tasks" class="nav-item">
+                <span>✓</span>
+                Tasks
+            </a>
+
+            <a href="/expenses" class="nav-item active">
+                <span>₹</span>
+                Expenses
+            </a>
+
+            <a href="/reminders" class="nav-item">
+                <span>◷</span>
+                Reminders
+            </a>
+
+            <a href="/shopping" class="nav-item">
+                <span>□</span>
+                Shopping
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="mini-card">
+
+                <span class="mini-icon">
+                    ✦
+                </span>
+
+                <div>
+                    <strong>LifeOS AI</strong>
+                    <small>Organize smarter</small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN -->
+
+    <main class="main expenses-page">
+
+
+        <!-- HEADER -->
+
+        <header class="page-header">
+
+            <p class="eyebrow">
+                FINANCIAL OVERVIEW
+            </p>
+
+            <h1>
+                Expenses ₹
+            </h1>
+
+            <p>
+                Keep track of your spending and understand where your money goes.
+            </p>
+
+        </header>
+
+
+
+        <!-- SUMMARY -->
+
+        <section class="expense-summary">
+
+            <div class="expense-summary-label">
+                TOTAL SPENDING
+            </div>
+
+            <div class="expense-total">
+                ₹{{ expense_total|int }}
+            </div>
+
+            <div class="expense-summary-text">
+                Total expenses recorded in LifeOS
+            </div>
+
+            <div class="expense-summary-icon">
+                ₹
+            </div>
+
+        </section>
+
+
+
+        <!-- EXPENSE LIST -->
+
+        <section class="expenses-card">
+
+            <div class="expenses-title">
+
+                <h2>
+                    Expense History
+                </h2>
+
+                <div class="expense-count">
+                    {{ expenses|length }}
+                </div>
+
+            </div>
+
+
+            {% if expenses %}
+
+            <div class="expense-list">
+
+                {% for expense in expenses %}
+
+                <div class="expense-item">
+
+                    <div class="expense-icon">
+                        ₹
+                    </div>
+
+                    <div class="expense-info">
+
+                        <strong>
+                            {{ expense[0] }}
+                        </strong>
+
+                        <small>
+                            Expense recorded
+                        </small>
+
+                    </div>
+
+                    <div class="expense-amount">
+                        ₹{{ expense[1]|int }}
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            {% else %}
+
+            <div class="empty-expenses">
+
+                <div class="empty-expense-icon">
+                    ₹
+                </div>
+
+                <h3>
+                    No expenses yet
+                </h3>
+
+                <p>
+                    Add an expense from the AI Assistant and it will appear here.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

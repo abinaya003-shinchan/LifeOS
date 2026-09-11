@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LifeOS - Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        /* ================= DASHBOARD ANIMATION ================= */
+
+        .main-content {
+            animation: pageEnter 0.5s ease;
+        }
+
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:nth-child(1) {
+            animation: cardEnter 0.45s ease 0.05s both;
+        }
+
+        .stat-card:nth-child(2) {
+            animation: cardEnter 0.45s ease 0.10s both;
+        }
+
+        .stat-card:nth-child(3) {
+            animation: cardEnter 0.45s ease 0.15s both;
+        }
+
+        .stat-card:nth-child(4) {
+            animation: cardEnter 0.45s ease 0.20s both;
+        }
+
+        @keyframes cardEnter {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        /* ================= DARK MODE ================= */
+
+        body.dark-mode {
+            background: #11101a;
+            color: #f5f3ff;
+        }
+
+        body.dark-mode .main-content {
+            background: transparent;
+        }
+
+        body.dark-mode .page-header h1,
+        body.dark-mode .section-heading h2,
+        body.dark-mode .stat-card strong,
+        body.dark-mode .activity-info strong {
+            color: #ffffff;
+        }
+
+        body.dark-mode .page-header p,
+        body.dark-mode .section-heading p,
+        body.dark-mode .stat-card span,
+        body.dark-mode .activity-info span {
+            color: #b9b4c9;
+        }
+
+        body.dark-mode .content-card,
+        body.dark-mode .stat-card {
+            background: #1b1926;
+            border-color: rgba(255,255,255,0.06);
+        }
+
+        body.dark-mode .ai-hero {
+            border-color: rgba(255,255,255,0.06);
+        }
+
+        body.dark-mode .ai-input-wrapper {
+            background: #242130;
+            border-color: rgba(255,255,255,0.08);
+        }
+
+        body.dark-mode .ai-input-wrapper input {
+            color: #ffffff;
+        }
+
+        body.dark-mode .ai-input-wrapper input::placeholder {
+            color: #8f899f;
+        }
+
+        body.dark-mode .quick-command {
+            background: #242130;
+            border-color: rgba(255,255,255,0.06);
+        }
+
+        body.dark-mode .quick-command strong {
+            color: #ffffff;
+        }
+
+        body.dark-mode .quick-command small {
+            color: #aaa4b8;
+        }
+
+        body.dark-mode .activity-item {
+            border-color: rgba(255,255,255,0.06);
+        }
+
+
+        /* ================= THEME BUTTON ================= */
+
+        .theme-toggle {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            margin-top: 14px;
+            padding: 11px 14px;
+
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+
+            background: rgba(255,255,255,0.08);
+            color: #ffffff;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.14);
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="app-layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                L
+            </div>
+
+            <div>
+                <h2>LifeOS</h2>
+                <span>Personal Assistant</span>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="/" class="nav-item active">
+                <span>🏠</span>
+                Dashboard
+            </a>
+
+            <a href="/tasks" class="nav-item">
+                <span>✅</span>
+                Tasks
+            </a>
+
+            <a href="/expenses" class="nav-item">
+                <span>💰</span>
+                Expenses
+            </a>
+
+            <a href="/reminders" class="nav-item">
+                <span>🔔</span>
+                Reminders
+            </a>
+
+            <a href="/shopping" class="nav-item">
+                <span>🛒</span>
+                Shopping
+            </a>
+
+            <a href="/ai-assistant" class="nav-item">
+                <span>🤖</span>
+                AI Assistant
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="mini-ai">
+
+                <div class="mini-ai-icon">
+                    ✨
+                </div>
+
+                <div>
+                    <strong>LifeOS AI</strong>
+                    <small>Always ready to help</small>
+                </div>
+
+            </div>
+
+
+            <!-- DARK MODE -->
+
+            <button
+                class="theme-toggle"
+                id="themeToggle"
+                onclick="toggleTheme()">
+
+                🌙
+                <span>Dark Mode</span>
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+
+        <!-- HEADER -->
+
+        <div class="page-header">
+
+            <div>
+
+                <span class="page-label">
+                    YOUR PERSONAL DASHBOARD
+                </span>
+
+                <h1 id="greeting">
+                    Hello 👋
+                </h1>
+
+                <p>
+                    Manage your day, tasks and reminders from one place.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= AI HERO ================= -->
+
+        <section class="ai-hero">
+
+            <div class="ai-mascot">
+                🤖
+            </div>
+
+
+            <div class="ai-hero-content">
+
+                <span class="ai-status">
+                    ● AI ONLINE
+                </span>
+
+                <h2>
+                    What do you want to do?
+                </h2>
+
+                <p>
+                    Tell LifeOS naturally and I'll organize it for you.
+                </p>
+
+
+                <form
+                    method="POST"
+                    action="/"
+                    class="ai-command-form">
+
+                    <div class="ai-input-wrapper">
+
+                        <span class="input-icon">
+                            ✨
+                        </span>
+
+                        <input
+                            type="text"
+                            name="user_input"
+                            placeholder="Try: Remind me at 7 PM to study..."
+                            required
+                            autocomplete="off">
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="ai-send-button">
+
+                        Add to LifeOS →
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= MESSAGE ================= -->
+
+        {% if message %}
+
+        <div class="success-message">
+            {{ message }}
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- ================= STATS ================= -->
+
+        <div class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
+                <div>
+
+                    <span>
+                        Pending Tasks
+                    </span>
+
+                    <strong>
+                        {{ task_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    💰
+                </div>
+
+                <div>
+
+                    <span>
+                        Total Expenses
+                    </span>
+
+                    <strong>
+                        ₹{{ expense_count|int }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🔔
+                </div>
+
+                <div>
+
+                    <span>
+                        Reminders
+                    </span>
+
+                    <strong>
+                        {{ reminder_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🛒
+                </div>
+
+                <div>
+
+                    <span>
+                        Shopping Items
+                    </span>
+
+                    <strong>
+                        {{ shopping_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= QUICK ACTIONS ================= -->
+
+        <section class="content-card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Quick Actions ⚡
+                    </h2>
+
+                    <p>
+                        Jump directly to what you need.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-command-grid">
+
+
+                <button
+                    type="button"
+                    class="quick-command"
+                    onclick="window.location.href='/tasks'">
+
+                    <span>✅</span>
+
+                    <div>
+
+                        <strong>
+                            Manage Tasks
+                        </strong>
+
+                        <small>
+                            View and complete tasks
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+
+                <button
+                    type="button"
+                    class="quick-command"
+                    onclick="window.location.href='/expenses'">
+
+                    <span>💰</span>
+
+                    <div>
+
+                        <strong>
+                            Track Expenses
+                        </strong>
+
+                        <small>
+                            View your spending
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+
+                <button
+                    type="button"
+                    class="quick-command"
+                    onclick="window.location.href='/reminders'">
+
+                    <span>🔔</span>
+
+                    <div>
+
+                        <strong>
+                            View Reminders
+                        </strong>
+
+                        <small>
+                            Check scheduled reminders
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+
+                <button
+                    type="button"
+                    class="quick-command"
+                    onclick="window.location.href='/shopping'">
+
+                    <span>🛒</span>
+
+                    <div>
+
+                        <strong>
+                            Shopping List
+                        </strong>
+
+                        <small>
+                            Manage items to buy
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+
+                <button
+                    type="button"
+                    class="quick-command"
+                    onclick="window.location.href='/ai-assistant'">
+
+                    <span>🤖</span>
+
+                    <div>
+
+                        <strong>
+                            AI Assistant
+                        </strong>
+
+                        <small>
+                            Use smart commands
+                        </small>
+
+                    </div>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= RECENT ACTIVITY ================= -->
+
+        <section class="content-card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Recent Activity
+                    </h2>
+
+                    <p>
+                        Your latest LifeOS updates.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% if activities %}
+
+            <div class="activity-list">
+
+                {% for activity in activities %}
+
+                <div class="activity-item">
+
+                    <div class="activity-icon">
+
+                        {% if activity[1] == "✅ Task" %}
+                            ✅
+
+                        {% elif activity[1] == "💰 Expense" %}
+                            💰
+
+                        {% elif activity[1] == "🔔 Reminder" %}
+                            🔔
+
+                        {% elif activity[1] == "🛒 Shopping" %}
+                            🛒
+
+                        {% else %}
+                            ✨
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="activity-info">
+
+                        <strong>
+                            {{ activity[0] }}
+                        </strong>
+
+                        <span>
+                            {{ activity[1] }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ✨
+                </div>
+
+                <h3>
+                    No activity yet
+                </h3>
+
+                <p>
+                    Start by adding a task, expense, reminder or shopping item.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- ================= GREETING ================= -->
+
+<script>
+
+function updateGreeting() {
+
+    const hour = new Date().getHours();
+
+    const greeting =
+        document.getElementById("greeting");
+
+
+    if (hour >= 5 && hour < 12) {
+
+        greeting.innerHTML =
+            "Good Morning 👋";
+
+    }
+
+    else if (hour >= 12 && hour < 17) {
+
+        greeting.innerHTML =
+            "Good Afternoon ☀️";
+
+    }
+
+    else if (hour >= 17 && hour < 21) {
+
+        greeting.innerHTML =
+            "Good Evening 🌆";
+
+    }
+
+    else {
+
+        greeting.innerHTML =
+            "Good Night 🌙";
+
+    }
+
+}
+
+updateGreeting();
+
+</script>
+
+
+
+<!-- ================= DARK MODE ================= -->
+
+<script>
+
+function toggleTheme() {
+
+    document.body.classList.toggle("dark-mode");
+
+    const isDark =
+        document.body.classList.contains("dark-mode");
+
+
+    localStorage.setItem(
+        "lifeos_theme",
+        isDark ? "dark" : "light"
+    );
+
+
+    updateThemeButton();
+
+}
+
+
+function updateThemeButton() {
+
+    const button =
+        document.getElementById("themeToggle");
+
+    const isDark =
+        document.body.classList.contains("dark-mode");
+
+
+    if (isDark) {
+
+        button.innerHTML =
+            "☀️ <span>Light Mode</span>";
+
+    }
+
+    else {
+
+        button.innerHTML =
+            "🌙 <span>Dark Mode</span>";
+
+    }
+
+}
+
+
+if (
+    localStorage.getItem("lifeos_theme") === "dark"
+) {
+
+    document.body.classList.add("dark-mode");
+
+}
+
+
+updateThemeButton();
+
+</script>
+
+
+
+<!-- ================= REMINDER NOTIFICATION ================= -->
+
+<script>
+
+let notifiedReminders =
+    JSON.parse(
+        localStorage.getItem(
+            "lifeos_notified_reminders"
+        ) || "[]"
+    );
+
+
+function checkReminders() {
+
+    fetch("/api/reminders")
+
+        .then(response => response.json())
+
+        .then(reminders => {
+
+            const now =
+                new Date();
+
+            const currentHour =
+                now.getHours();
+
+            const currentMinute =
+                now.getMinutes();
+
+
+            reminders.forEach(reminder => {
+
+                const match =
+                    reminder.reminder_time
+                        .toLowerCase()
+                        .match(
+                            /(\d{1,2})(?::(\d{2}))?\s*(am|pm)/
+                        );
+
+
+                if (!match) {
+                    return;
+                }
+
+
+                let hour =
+                    parseInt(match[1]);
+
+                const minute =
+                    parseInt(
+                        match[2] || "0"
+                    );
+
+                const period =
+                    match[3];
+
+
+                if (
+                    period === "pm" &&
+                    hour !== 12
+                ) {
+
+                    hour += 12;
+
+                }
+
+
+                if (
+                    period === "am" &&
+                    hour === 12
+                ) {
+
+                    hour = 0;
+
+                }
+
+
+                const reminderKey =
+                    reminder.id +
+                    "-" +
+                    now.toDateString();
+
+
+                if (
+                    currentHour === hour &&
+                    currentMinute === minute &&
+                    !notifiedReminders.includes(
+                        reminderKey
+                    )
+                ) {
+
+
+                    if (
+                        "Notification" in window &&
+                        Notification.permission ===
+                        "granted"
+                    ) {
+
+                        new Notification(
+                            "LifeOS Reminder 🔔",
+                            {
+                                body:
+                                    reminder.text
+                            }
+                        );
+
+                    }
+
+                    else {
+
+                        alert(
+                            "🔔 LifeOS Reminder\n\n" +
+                            reminder.text
+                        );
+
+                    }
+
+
+                    notifiedReminders.push(
+                        reminderKey
+                    );
+
+
+                    localStorage.setItem(
+                        "lifeos_notified_reminders",
+                        JSON.stringify(
+                            notifiedReminders
+                        )
+                    );
+
+                }
+
+            });
+
+        })
+
+        .catch(error => {
+
+            console.log(
+                "Reminder check error:",
+                error
+            );
+
+        });
+
+}
+
+
+if (
+    "Notification" in window &&
+    Notification.permission === "default"
+) {
+
+    Notification.requestPermission();
+
+}
+
+
+checkReminders();
+
+
+setInterval(
+    checkReminders,
+    30000
+);
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reminders - LifeOS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">L</div>
+            <div>
+                <h2>LifeOS</h2>
+                <span>Personal Assistant</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/" class="nav-item">
+                <span>🏠</span>
+                Dashboard
+            </a>
+
+            <a href="/tasks" class="nav-item">
+                <span>✅</span>
+                Tasks
+            </a>
+
+            <a href="/expenses" class="nav-item">
+                <span>💰</span>
+                Expenses
+            </a>
+
+            <a href="/reminders" class="nav-item active">
+                <span>🔔</span>
+                Reminders
+            </a>
+
+            <a href="/shopping" class="nav-item">
+                <span>🛒</span>
+                Shopping
+            </a>
+
+            <a href="/ai-assistant" class="nav-item">
+                <span>🤖</span>
+                AI Assistant
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="mini-ai">
+                <div class="mini-ai-icon">✨</div>
+                <div>
+                    <strong>LifeOS AI</strong>
+                    <small>Always ready to help</small>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <div class="page-header">
+            <div>
+                <span class="page-label">STAY ON TRACK</span>
+                <h1>My Reminders 🔔</h1>
+                <p>Never miss an important moment.</p>
+            </div>
+
+            <a href="/" class="header-button">
+                + Add Reminder
+            </a>
+        </div>
+
+
+        <!-- Reminder Stats -->
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon reminder-icon">🔔</div>
+                <div>
+                    <span>Total Reminders</span>
+                    <strong>{{ reminders|length }}</strong>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon active-icon">⏰</div>
+                <div>
+                    <span>Scheduled</span>
+                    <strong>{{ reminders|length }}</strong>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Reminders List -->
+        <section class="content-card">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Upcoming Reminders</h2>
+                    <p>Your scheduled reminders are shown here.</p>
+                </div>
+            </div>
+
+            {% if reminders %}
+
+                <div class="reminder-list">
+
+                    {% for reminder in reminders %}
+
+                    <div class="reminder-item">
+
+                        <div class="reminder-left">
+                            <div class="reminder-bell">
+                                🔔
+                            </div>
+
+                            <div class="reminder-info">
+                                <h3>{{ reminder[1] }}</h3>
+
+                                {% if reminder[2] %}
+                                <span class="reminder-time">
+                                    ⏰ {{ reminder[2] }}
+                                </span>
+                                {% else %}
+                                <span class="reminder-time">
+                                    Time not specified
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="reminder-status">
+                            <span>Scheduled</span>
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+                    <div class="empty-icon">🔔</div>
+                    <h3>No reminders yet</h3>
+                    <p>
+                        Add a reminder from the dashboard to see it here.
+                    </p>
+
+                    <a href="/" class="empty-button">
+                        Create Reminder
+                    </a>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

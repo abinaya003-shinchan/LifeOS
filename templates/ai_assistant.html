@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - LifeOS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">L</div>
+            <div>
+                <h2>LifeOS</h2>
+                <span>Personal Assistant</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/" class="nav-item">
+                <span>🏠</span>
+                Dashboard
+            </a>
+
+            <a href="/tasks" class="nav-item">
+                <span>✅</span>
+                Tasks
+            </a>
+
+            <a href="/expenses" class="nav-item">
+                <span>💰</span>
+                Expenses
+            </a>
+
+            <a href="/reminders" class="nav-item">
+                <span>🔔</span>
+                Reminders
+            </a>
+
+            <a href="/shopping" class="nav-item">
+                <span>🛒</span>
+                Shopping
+            </a>
+
+            <a href="/ai-assistant" class="nav-item active">
+                <span>🤖</span>
+                AI Assistant
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="mini-ai">
+                <div class="mini-ai-icon">✨</div>
+                <div>
+                    <strong>LifeOS AI</strong>
+                    <small>Always ready to help</small>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <div class="page-header">
+
+            <div>
+                <span class="page-label">SMART ASSISTANT</span>
+                <h1>AI Assistant 🤖</h1>
+                <p>Tell LifeOS what you need.</p>
+            </div>
+
+        </div>
+
+
+        <!-- AI Hero -->
+        <section class="ai-hero">
+
+            <div class="ai-mascot">
+                🤖
+            </div>
+
+            <div class="ai-hero-content">
+
+                <span class="ai-status">
+                    ● AI ONLINE
+                </span>
+
+                <h2>Your personal productivity assistant</h2>
+
+                <p>
+                    Add tasks, expenses, reminders and shopping items
+                    using simple natural language.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- AI Input -->
+        <section class="content-card ai-input-card">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>What can I help with?</h2>
+                    <p>Type a command below and LifeOS will understand it.</p>
+                </div>
+
+            </div>
+
+            <form action="/" method="POST" class="ai-command-form">
+
+                <div class="ai-input-wrapper">
+
+                    <span class="input-icon">✨</span>
+
+                    <input
+                        type="text"
+                        name="user_input"
+                        placeholder="Try: Remind me at 7 PM to study..."
+                        required
+                        autocomplete="off"
+                    >
+
+                </div>
+
+                <button type="submit" class="ai-send-button">
+                    Add to LifeOS →
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- Quick Commands -->
+        <section class="content-card">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>Quick Commands</h2>
+                    <p>Try one of these examples.</p>
+                </div>
+
+            </div>
+
+            <div class="quick-command-grid">
+
+                <button
+                    type="button"
+                    onclick="fillCommand('Complete my assignment')"
+                    class="quick-command"
+                >
+                    <span>✅</span>
+                    <div>
+                        <strong>Add a Task</strong>
+                        <small>Complete my assignment</small>
+                    </div>
+                </button>
+
+
+                <button
+                    type="button"
+                    onclick="fillCommand('Spent ₹250 on food')"
+                    class="quick-command"
+                >
+                    <span>💰</span>
+                    <div>
+                        <strong>Add Expense</strong>
+                        <small>Spent ₹250 on food</small>
+                    </div>
+                </button>
+
+
+                <button
+                    type="button"
+                    onclick="fillCommand('Remind me at 7 PM to study')"
+                    class="quick-command"
+                >
+                    <span>🔔</span>
+                    <div>
+                        <strong>Set Reminder</strong>
+                        <small>Remind me at 7 PM to study</small>
+                    </div>
+                </button>
+
+
+                <button
+                    type="button"
+                    onclick="fillCommand('Buy notebook')"
+                    class="quick-command"
+                >
+                    <span>🛒</span>
+                    <div>
+                        <strong>Shopping Item</strong>
+                        <small>Buy notebook</small>
+                    </div>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- How It Works -->
+        <section class="content-card">
+
+            <div class="section-heading">
+                <div>
+                    <h2>How LifeOS understands you</h2>
+                    <p>Simple words are enough.</p>
+                </div>
+            </div>
+
+            <div class="ai-features">
+
+                <div class="ai-feature">
+                    <span>🧠</span>
+                    <div>
+                        <strong>Understand</strong>
+                        <p>Recognizes what you want to do.</p>
+                    </div>
+                </div>
+
+                <div class="ai-feature">
+                    <span>⚡</span>
+                    <div>
+                        <strong>Organize</strong>
+                        <p>Automatically categorizes your input.</p>
+                    </div>
+                </div>
+
+                <div class="ai-feature">
+                    <span>📊</span>
+                    <div>
+                        <strong>Track</strong>
+                        <p>Keeps everything inside LifeOS.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+function fillCommand(command) {
+    const input = document.querySelector('input[name="user_input"]');
+
+    input.value = command;
+    input.focus();
+}
+</script>
+
+</body>
+</html>

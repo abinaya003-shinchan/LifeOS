@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping - LifeOS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">L</div>
+            <div>
+                <h2>LifeOS</h2>
+                <span>Personal Assistant</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/" class="nav-item">
+                <span>🏠</span>
+                Dashboard
+            </a>
+
+            <a href="/tasks" class="nav-item">
+                <span>✅</span>
+                Tasks
+            </a>
+
+            <a href="/expenses" class="nav-item">
+                <span>💰</span>
+                Expenses
+            </a>
+
+            <a href="/reminders" class="nav-item">
+                <span>🔔</span>
+                Reminders
+            </a>
+
+            <a href="/shopping" class="nav-item active">
+                <span>🛒</span>
+                Shopping
+            </a>
+
+            <a href="/ai-assistant" class="nav-item">
+                <span>🤖</span>
+                AI Assistant
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="mini-ai">
+                <div class="mini-ai-icon">✨</div>
+                <div>
+                    <strong>LifeOS AI</strong>
+                    <small>Always ready to help</small>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <div class="page-header">
+
+            <div>
+                <span class="page-label">SHOP SMART</span>
+                <h1>Shopping List 🛒</h1>
+                <p>Keep track of everything you need to buy.</p>
+            </div>
+
+            <a href="/" class="header-button">
+                + Add Item
+            </a>
+
+        </div>
+
+
+        <!-- Stats -->
+        <div class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon shopping-icon">
+                    🛒
+                </div>
+
+                <div>
+                    <span>Total Items</span>
+                    <strong>{{ shopping_items|length }}</strong>
+                </div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon active-icon">
+                    📋
+                </div>
+
+                <div>
+                    <span>Shopping Ready</span>
+                    <strong>{{ shopping_items|length }}</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Shopping List -->
+        <section class="content-card">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>My Shopping List</h2>
+                    <p>Mark items as completed when you buy them.</p>
+                </div>
+
+            </div>
+
+
+            {% if shopping_items %}
+
+            <div class="shopping-list">
+
+                {% for item in shopping_items %}
+
+                <div class="shopping-item {% if item[2] %}completed{% endif %}">
+
+                    <div class="shopping-left">
+
+                        <div class="shopping-icon-box">
+                            🛒
+                        </div>
+
+                        <div class="shopping-info">
+                            <h3>{{ item[1] }}</h3>
+
+                            {% if item[2] %}
+                            <span class="completed-label">
+                                ✓ Purchased
+                            </span>
+                            {% else %}
+                            <span>
+                                📝 To Buy
+                            </span>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+
+                    {% if not item[2] %}
+
+                    <form method="POST">
+
+                        <input
+                            type="hidden"
+                            name="item_id"
+                            value="{{ item[0] }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="complete-button"
+                        >
+                            ✓ Done
+                        </button>
+
+                    </form>
+
+                    {% else %}
+
+                    <div class="done-badge">
+                        ✓ Done
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    🛒
+                </div>
+
+                <h3>Your shopping list is empty</h3>
+
+                <p>
+                    Add something like "Buy milk" or "Purchase notebook"
+                    from the dashboard.
+                </p>
+
+                <a href="/" class="empty-button">
+                    Add Shopping Item
+                </a>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>
