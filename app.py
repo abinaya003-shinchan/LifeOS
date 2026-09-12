@@ -5,12 +5,7 @@ import re
 app = Flask(__name__)
 
 
-# =========================
-# DATABASE
-# =========================
-
 def init_db():
-
     conn = sqlite3.connect("lifeos.db")
     cursor = conn.cursor()
 
@@ -25,25 +20,18 @@ def init_db():
         )
     """)
 
-    # Add missing columns if old database is being used
     try:
-        cursor.execute(
-            "ALTER TABLE items ADD COLUMN amount REAL DEFAULT 0"
-        )
+        cursor.execute("ALTER TABLE items ADD COLUMN amount REAL DEFAULT 0")
     except sqlite3.OperationalError:
         pass
 
     try:
-        cursor.execute(
-            "ALTER TABLE items ADD COLUMN reminder_time TEXT DEFAULT ''"
-        )
+        cursor.execute("ALTER TABLE items ADD COLUMN reminder_time TEXT DEFAULT ''")
     except sqlite3.OperationalError:
         pass
 
     try:
-        cursor.execute(
-            "ALTER TABLE items ADD COLUMN completed INTEGER DEFAULT 0"
-        )
+        cursor.execute("ALTER TABLE items ADD COLUMN completed INTEGER DEFAULT 0")
     except sqlite3.OperationalError:
         pass
 
@@ -51,30 +39,17 @@ def init_db():
     conn.close()
 
 
-# =========================
-# DASHBOARD
-# =========================
-
 @app.route("/", methods=["GET", "POST"])
 def dashboard():
-
     message = ""
 
     if request.method == "POST":
-
         user_input = request.form.get("user_input", "").strip()
 
         if user_input:
-
             text = user_input.lower()
-
             amount = 0
             reminder_time = ""
-
-
-            # =========================
-            # EXPENSE
-            # =========================
 
             if (
                 "₹" in user_input
@@ -82,7 +57,6 @@ def dashboard():
                 or "spent" in text
                 or "expense" in text
             ):
-
                 category = "💰 Expense"
 
                 match = re.search(
@@ -91,7 +65,6 @@ def dashboard():
                 )
 
                 if not match:
-
                     match = re.search(
                         r"\b(?:rs\.?|rupees?)\s*(\d+(?:\.\d+)?)",
                         text
@@ -100,16 +73,7 @@ def dashboard():
                 if match:
                     amount = float(match.group(1))
 
-
-            # =========================
-            # REMINDER
-            # =========================
-
-            elif (
-                "remind" in text
-                or "reminder" in text
-            ):
-
+            elif "remind" in text or "reminder" in text:
                 category = "🔔 Reminder"
 
                 time_match = re.search(
@@ -120,32 +84,15 @@ def dashboard():
                 if time_match:
                     reminder_time = time_match.group(1)
 
-
-            # =========================
-            # SHOPPING
-            # =========================
-
             elif (
                 "buy" in text
                 or "shopping" in text
                 or "purchase" in text
             ):
-
                 category = "🛒 Shopping"
 
-
-            # =========================
-            # TASK
-            # =========================
-
             else:
-
                 category = "✅ Task"
-
-
-            # =========================
-            # SAVE TO DATABASE
-            # =========================
 
             conn = sqlite3.connect("lifeos.db")
             cursor = conn.cursor()
@@ -164,94 +111,65 @@ def dashboard():
             conn.commit()
             conn.close()
 
-
-            # =========================
-            # SUCCESS MESSAGE
-            # =========================
-
             if reminder_time:
-
                 message = (
                     f"{category} set for "
                     f"{reminder_time}: {user_input}"
                 )
 
             elif category == "💰 Expense":
-
                 message = (
                     f"{category} detected: "
                     f"{user_input} → ₹{amount:g}"
                 )
 
             else:
-
                 message = (
                     f"{category} detected: "
                     f"{user_input}"
                 )
 
-
-    # =========================
-    # DASHBOARD DATA
-    # =========================
-
     conn = sqlite3.connect("lifeos.db")
     cursor = conn.cursor()
 
-
-    # Pending tasks
     cursor.execute("""
         SELECT COUNT(*)
         FROM items
         WHERE category = '✅ Task'
         AND completed = 0
     """)
-
     task_count = cursor.fetchone()[0]
 
-
-    # Total expenses
     cursor.execute("""
         SELECT COALESCE(SUM(amount), 0)
         FROM items
         WHERE category = '💰 Expense'
     """)
-
     expense_total = cursor.fetchone()[0]
 
-
-    # Reminder count
     cursor.execute("""
         SELECT COUNT(*)
         FROM items
         WHERE category = '🔔 Reminder'
     """)
-
     reminder_count = cursor.fetchone()[0]
 
-
-    # Shopping count
     cursor.execute("""
         SELECT COUNT(*)
         FROM items
         WHERE category = '🛒 Shopping'
     """)
-
     shopping_count = cursor.fetchone()[0]
 
-
-    # Recent activities
     cursor.execute("""
         SELECT text, category
         FROM items
         ORDER BY id DESC
         LIMIT 10
     """)
-
     activities = cursor.fetchall()
 
     conn.close()
-
 
     return render_template(
         "dashboard.html",
@@ -264,23 +182,15 @@ def dashboard():
     )
 
 
-# =========================
-# TASKS
-# =========================
-
 @app.route("/tasks", methods=["GET", "POST"])
 def tasks_page():
-
     conn = sqlite3.connect("lifeos.db")
     cursor = conn.cursor()
 
-
     if request.method == "POST":
-
         task_id = request.form.get("task_id")
 
         if task_id:
-
             cursor.execute("""
                 UPDATE items
                 SET completed = 1
@@ -288,7 +198,6 @@ def tasks_page():
             """, (task_id,))
 
             conn.commit()
-
 
     cursor.execute("""
         SELECT id, text, completed
@@ -301,23 +210,16 @@ def tasks_page():
 
     conn.close()
 
-
     return render_template(
         "tasks.html",
         tasks=tasks
     )
 
 
-# =========================
-# EXPENSES
-# =========================
-
 @app.route("/expenses")
 def expenses_page():
-
     conn = sqlite3.connect("lifeos.db")
     cursor = conn.cursor()
-
 
     cursor.execute("""
         SELECT text, amount
@@ -327,7 +229,6 @@ def expenses_page():
     """)
 
     expenses = cursor.fetchall()
-
 
     cursor.execute("""
         SELECT COALESCE(SUM(amount), 0)
@@ -339,7 +240,6 @@ def expenses_page():
 
     conn.close()
 
-
     return render_template(
         "expenses.html",
         expenses=expenses,
@@ -347,16 +247,10 @@ def expenses_page():
     )
 
 
-# =========================
-# REMINDERS PAGE
-# =========================
-
 @app.route("/reminders")
 def reminders_page():
-
     conn = sqlite3.connect("lifeos.db")
     cursor = conn.cursor()
-
 
     cursor.execute("""
         SELECT id, text, reminder_time
@@ -369,23 +263,16 @@ def reminders_page():
 
     conn.close()
 
-
     return render_template(
         "reminders.html",
         reminders=reminders
     )
 
 
-# =========================
-# REMINDER API
-# =========================
-
 @app.route("/api/reminders")
 def reminder_api():
-
     conn = sqlite3.connect("lifeos.db")
     cursor = conn.cursor()
-
 
     cursor.execute("""
         SELECT id, text, reminder_time
@@ -399,38 +286,27 @@ def reminder_api():
 
     conn.close()
 
-
     reminders = []
 
     for row in rows:
-
         reminders.append({
             "id": row[0],
             "text": row[1],
             "reminder_time": row[2]
         })
 
-
     return jsonify(reminders)
 
 
-# =========================
-# SHOPPING
-# =========================
-
 @app.route("/shopping", methods=["GET", "POST"])
 def shopping_page():
-
     conn = sqlite3.connect("lifeos.db")
     cursor = conn.cursor()
 
-
     if request.method == "POST":
-
         item_id = request.form.get("item_id")
 
         if item_id:
-
             cursor.execute("""
                 UPDATE items
                 SET completed = 1
@@ -439,7 +315,6 @@ def shopping_page():
             """, (item_id,))
 
             conn.commit()
-
 
     cursor.execute("""
         SELECT id, text, completed
@@ -452,33 +327,21 @@ def shopping_page():
 
     conn.close()
 
-
     return render_template(
         "shopping.html",
         shopping_items=shopping_items
     )
 
 
-# =========================
-# AI ASSISTANT
-# =========================
-
 @app.route("/ai-assistant")
 def ai_assistant():
-
-    return render_template(
-        "ai_assistant.html"
-    )
+    return render_template("ai_assistant.html")
 
 
-# =========================
-# START APPLICATION
-# =========================
+# Create the database/table when Flask starts.
+# This is important for Gunicorn/Render deployment.
+init_db()
+
 
 if __name__ == "__main__":
-
-    init_db()
-
-    app.run(
-        debug=True
-    )
+    app.run(debug=True)
